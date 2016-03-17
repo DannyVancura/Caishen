@@ -29,9 +29,7 @@ public class CardExpiryDateValidator {
     private func checkBeforeCurrentDate(expiry: Expiry) -> CardValidationResult {
         let currentDate = NSDate()
         
-        guard let expiryDate = expiry.expiryDate() else {
-            return CardValidationResult.CardExpired
-        }
+        let expiryDate = expiry.rawValue
         
         if expiryDate.timeIntervalSince1970 < currentDate.timeIntervalSince1970 {
             return CardValidationResult.CardExpired

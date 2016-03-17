@@ -147,7 +147,7 @@ public class CardNumberTextField: UITextField, NumberInputTextFieldDelegate {
             }
             return Expiry(month: month, year: year)
         } set {
-            guard let components = newValue?.stringValue().componentsSeparatedByString("/") where components.count == 2 else {
+            guard let components = newValue?.description.componentsSeparatedByString("/") where components.count == 2 else {
                 return
             }
             guard components[0].characters.count == 2 && components[1].characters.count == 4 else {

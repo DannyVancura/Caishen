@@ -51,7 +51,7 @@ extension CardNumberTextField: CardInfoTextFieldDelegate {
     
     private func checkCardExpired() {
         // if the date is invalid, set the text color for the date to `invalidNumberColor`
-        if let cardExpiry = cardExpiry where cardExpiry.expiryDate()?.timeIntervalSinceNow < 0 {
+        if cardExpiry?.rawValue.timeIntervalSinceNow < 0 {
             monthTextField?.textColor = invalidInputColor ?? UIColor.redColor()
             yearTextField?.textColor = invalidInputColor ?? UIColor.redColor()
         } else {
