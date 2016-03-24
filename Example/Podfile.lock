@@ -1,8 +1,30 @@
 PODS:
-  - Caishen (0.1.0)
+  - Braintree (4.2.3):
+    - Braintree/Card (= 4.2.3)
+    - Braintree/Core (= 4.2.3)
+    - Braintree/PayPal (= 4.2.3)
+    - Braintree/UI (= 4.2.3)
+  - Braintree/Card (4.2.3):
+    - Braintree/Core
+  - Braintree/Core (4.2.3)
+  - Braintree/PayPal (4.2.3):
+    - Braintree/Core
+    - Braintree/PayPalOneTouch
+  - Braintree/PayPalDataCollector (4.2.3)
+  - Braintree/PayPalOneTouch (4.2.3):
+    - Braintree/Core
+    - Braintree/PayPalDataCollector
+  - Braintree/UI (4.2.3):
+    - Braintree/Card
+    - Braintree/Core
+  - Caishen (0.1.0):
+    - Caishen/Braintree (= 0.1.0)
+  - Caishen/Braintree (0.1.0):
+    - Braintree
   - CardIO (5.3.1)
 
 DEPENDENCIES:
+  - Braintree
   - Caishen (from `../`)
   - CardIO
 
@@ -11,7 +33,8 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  Caishen: 5ad0f52d2dee1dc24490171f85d7de50fe5b3bf8
+  Braintree: 05791bdc6d43c3faf2f802dd2d687e9f619f7f57
+  Caishen: 7cac7b5de5c462ee5d2f33a36210a8212bc91aae
   CardIO: a299efcd0348c3b256a1da53f22951319c3855a2
 
 COCOAPODS: 0.39.0

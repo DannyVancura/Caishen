@@ -35,4 +35,10 @@ Pod::Spec.new do |s|
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
+
+  s.subspec 'Braintree' do |sp|
+    sp.xcconfig	= { 'OTHER_CFLAGS' => '$(inherited) -DCAISHEN_BRAINTREE' }
+    sp.dependency 'Braintree'
+    sp.source_files = 'Pod/Classes/Braintree/**/*'
+  end
 end

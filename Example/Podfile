@@ -4,6 +4,7 @@ use_frameworks!
 target 'Caishen_Example', :exclusive => true do
   pod 'Caishen', :path => '../'
   pod 'CardIO'
+  pod 'Braintree'
 end
 
 target 'Caishen_Tests', :exclusive => true do
