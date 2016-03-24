@@ -1,0 +1,3 @@
+Discussion:
+
+- podspec: Should the dependency be 'Braintree/Card' (accepting only credit and debit cards), instead of 'Braintree' (also accepting Apple-Pay)?

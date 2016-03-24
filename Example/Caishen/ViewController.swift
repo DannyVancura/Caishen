@@ -8,6 +8,7 @@
 
 import UIKit
 import Caishen
+import Braintree
 
 class ViewController: UIViewController, CardNumberTextFieldDelegate, CardIOPaymentViewControllerDelegate {
     
@@ -16,13 +17,10 @@ class ViewController: UIViewController, CardNumberTextFieldDelegate, CardIOPayme
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupBraintree()
         cardNumberTextField.cardNumberTextFieldDelegate = self
     }
     
-    @IBAction func buy(sender: AnyObject) {
-        dismissViewControllerAnimated(true, completion: nil)
-    }
     @IBAction func cancel(sender: UIButton) {
         dismissViewControllerAnimated(true, completion: nil)
     }
@@ -58,6 +56,42 @@ class ViewController: UIViewController, CardNumberTextFieldDelegate, CardIOPayme
         cardNumberTextField.prefillCardInformation(cardInfo.cardNumber, month: Int(cardInfo.expiryMonth), year: Int(cardInfo.expiryYear), cvc: cardInfo.cvv)
         paymentViewController.dismissViewControllerAnimated(true, completion: nil)
     }
-
+    
+    // MARK: - Braintree
+    
+    let btAPI: BTAPIClient? = BTAPIClient(authorization: "")
+    var braintreeClient: BTAPIClient?
+    
+    private func setupBraintree() {
+        let clientTokenURL = NSURL(string: "https://braintree-sample-merchant.herokuapp.com/client_token")!
+        let clientTokenRequest = NSMutableURLRequest(URL: clientTokenURL)
+        clientTokenRequest.setValue("text/plain", forHTTPHeaderField: "Accept")
+    
+        NSURLSession.sharedSession().dataTaskWithRequest(clientTokenRequest) { (data, response, error) -> Void in
+            if let error = error {
+                print(error)
+            }
+            guard let data = data else {
+                return
+            }
+    
+            let clientToken = String(data: data, encoding: NSUTF8StringEncoding)
+            self.braintreeClient = BTAPIClient(authorization: clientToken!)
+        }.resume()
+    }
+    
+    @IBAction func buy(sender: UIButton) {
+        guard let braintreeClient = braintreeClient else {
+            return
+        }
+    
+        cardNumberTextField.card?.tokenizeViaBraintree(braintreeClient, postalCode: "00000", completionHandler: { (nonce) in
+            print("\(nonce.type) \(nonce.localizedDescription)")
+        }, errorHandler: { (error) in
+            print(error)
+        })
+        
+        dismissViewControllerAnimated(true, completion: nil)
+    }
 }
 
