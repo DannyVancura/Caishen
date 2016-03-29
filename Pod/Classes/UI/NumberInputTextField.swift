@@ -96,8 +96,8 @@ public class NumberInputTextField: StylizedTextField {
         // Text in text field after applying changes, formatted and unformatted:
         let newTextFormatted = textFieldTextFormatted.stringByReplacingCharactersInRange(range, withString: string)
         let newTextUnformatted = cardNumberFormatter.unformattedCardNumber(newTextFormatted)
-
-        if !newTextUnformatted.isEmpty && UInt(newTextUnformatted) == nil {
+        
+        if !newTextUnformatted.isEmpty && !newTextUnformatted.isNumeric() {
             flashTextFieldInvalid()
             return false
         }

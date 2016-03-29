@@ -39,4 +39,11 @@ extension String {
         }
         return self.substringWithRange((self.startIndex.advancedBy(fromInclusively)..<self.startIndex.advancedBy(toExclusively)))
     }
+    
+    /**
+     - returns: True if this string contains only digits.
+     */
+    func isNumeric() -> Bool {
+        return characters.reduce(true, combine: { return $0 && "0123456789".characters.contains($1)})
+    }
 }
