@@ -13,15 +13,18 @@ import UIKit
  */
 @IBDesignable
 public class NumberInputTextField: StylizedTextField {
-    
+
     // MARK: - Variables
     
     /**
      The card number that has been entered into this text field. 
      
-     - note: This card number may be incomplete and invalid while the user is entering a card number.
+     - note: This card number may be incomplete and invalid while the user is entering a card number. Be sure to validate it against a proper card type before assuming it is valid.
      */
-    public internal(set) var parsedCardNumber: Number?
+    public var cardNumber: Number {
+        let textFieldTextUnformatted = cardNumberFormatter.unformattedCardNumber(text ?? "")
+        return Number(rawValue: textFieldTextUnformatted)
+    }
     
     /**
      */
@@ -54,18 +57,13 @@ public class NumberInputTextField: StylizedTextField {
     /**
      The card type register that holds information about which card types are accepted and which ones are not.
      */
-    private var cardTypeRegister: CardTypeRegister = CardTypeRegister.sharedCardTypeRegister
-    
-    /**
-     The currently detected card type for the entered card number. May be nil, if no card type has been detected.
-     */
-    private var cardType: CardType?
+    private let cardTypeRegister: CardTypeRegister = CardTypeRegister.sharedCardTypeRegister
     
     /**
      A card number formatter used to format the input
      */
     private var cardNumberFormatter: CardNumberFormatter {
-        return CardNumberFormatter(separator: self.cardNumberSeparator, cardTypeRegister: cardTypeRegister)
+        return CardNumberFormatter(cardTypeRegister: cardTypeRegister, separator: cardNumberSeparator)
     }
     
     /**
@@ -95,65 +93,37 @@ public class NumberInputTextField: StylizedTextField {
     public override func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
         // Current text in text field, formatted and unformatted:
         let textFieldTextFormatted = NSString(string: textField.text ?? "")
-        let textFieldTextUnformatted = cardNumberFormatter.unformattedCardNumber(textFieldTextFormatted as String)
         // Text in text field after applying changes, formatted and unformatted:
         let newTextFormatted = textFieldTextFormatted.stringByReplacingCharactersInRange(range, withString: string)
         let newTextUnformatted = cardNumberFormatter.unformattedCardNumber(newTextFormatted)
-        
-        let newTextIsNumeric = UInt(newTextUnformatted) != nil
-        
-        // Create a card number with the newly formed string.
-        let previouslyParsedCardNumber = Number(rawValue: textFieldTextUnformatted)
-        parsedCardNumber = Number(rawValue: newTextUnformatted)
-        
-        if let parsedCardNumber = parsedCardNumber {
-            let partialValidation = cardTypeRegister.cardTypeForNumber(parsedCardNumber)?.checkCardNumberPartiallyValid(parsedCardNumber)
-            let completeValidation = cardTypeRegister.cardTypeForNumber(parsedCardNumber)?.validateNumber(parsedCardNumber)
-            
-            // If the card number was valid before and a user entered even more text, ignore this and continue with the month text field
-            if let previousCompleteValidation = cardTypeRegister.cardTypeForNumber(previouslyParsedCardNumber)?.validateNumber(previouslyParsedCardNumber) where newTextFormatted.characters.count > textFieldTextFormatted.length {
-                
-                if previousCompleteValidation == .Valid {
-                    self.parsedCardNumber = previouslyParsedCardNumber
-                    cardType = cardTypeRegister.cardTypeForNumber(previouslyParsedCardNumber)
-                    numberInputTextFieldDelegate?.numberInputTextFieldDidComplete(self)
-                    return false
-                }
-            }
-            
-            cardType = cardTypeRegister.cardTypeForNumber(parsedCardNumber)
-            
-            // Based on the validity of the input, allow changing the input or forbid (resulting in the text color changing shortly)
-            if completeValidation == nil && partialValidation == nil && newTextUnformatted.characters.count <= 6 {
-                // Case 1: No card type has been detected so far and less or equal than 6 digits have been entered (the amount of digits in a IIN for identification of the card issuer)
-                cardNumberFormatter.replaceRangeFormatted(range, inTextField: textField, withString: string)
-                numberInputTextFieldDelegate?.numberInputTextFieldDidChangeText(self)
 
-                return false
-            } else if completeValidation == CardValidationResult.Valid {
-                // Case 2: A card type has been detected and the card number was entered completely
-                cardNumberFormatter.replaceRangeFormatted(range, inTextField: textField, withString: string)
-                numberInputTextFieldDelegate?.numberInputTextFieldDidComplete(self)
-
-                return false
-            } else if partialValidation == CardValidationResult.Valid {
-                // Case 3: A card type has been detected, but the card number is only partially valid
-                cardNumberFormatter.replaceRangeFormatted(range, inTextField: textField, withString: string)
-                numberInputTextFieldDelegate?.numberInputTextFieldDidChangeText(self)
-                
-                return false
-            } else {
-                // Case 4: The user was about to change the card number so that it would become invalid
-                if newTextUnformatted.characters.count <= cardType?.expectedCardNumberLength() ?? 16 {
-                    cardNumberFormatter.replaceRangeFormatted(range, inTextField: textField, withString: string)
-                }
-                flashTextFieldInvalid()
-                
-                return false
-            }
+        if !newTextUnformatted.isEmpty && UInt(newTextUnformatted) == nil {
+            flashTextFieldInvalid()
+            return false
         }
-        
-        return newTextIsNumeric
+
+        let parsedCardNumber = Number(rawValue: newTextUnformatted)
+        let oldValidation = cardTypeRegister.cardTypeForNumber(cardNumber).validateNumber(cardNumber)
+        let newValidation =
+            cardTypeRegister.cardTypeForNumber(parsedCardNumber).validateNumber(parsedCardNumber)
+
+        if !newValidation.contains(.NumberTooLong) {
+            cardNumberFormatter.replaceRangeFormatted(range, inTextField: textField, withString: string)
+            numberInputTextFieldDelegate?.numberInputTextFieldDidChangeText(self)
+        } else if oldValidation == .Valid {
+            numberInputTextFieldDelegate?.numberInputTextFieldDidComplete(self)
+        }
+
+        let newLengthComplete =
+            parsedCardNumber.length == cardTypeRegister.cardTypeForNumber(parsedCardNumber).maxLength
+
+        if newLengthComplete && newValidation != .Valid {
+            flashTextFieldInvalid()
+        } else if newValidation == .Valid {
+            numberInputTextFieldDelegate?.numberInputTextFieldDidComplete(self)
+        }
+
+        return false
     }
     
     public func prefillInformation(cardNumber: String) {
@@ -161,13 +131,11 @@ public class NumberInputTextField: StylizedTextField {
         let unformattedCardNumber = String(cardNumber.characters.filter({validCharacters.contains($0)}))
         let cardNumber = Number(rawValue: unformattedCardNumber)
         let type = cardTypeRegister.cardTypeForNumber(cardNumber)
-        let numberPartiallyValid = type?.checkCardNumberPartiallyValid(cardNumber) == .Valid
+        let numberPartiallyValid = type.checkCardNumberPartiallyValid(cardNumber) == .Valid
         
         if numberPartiallyValid {
-            let formatter = CardNumberFormatter(cardTypeRegister: cardTypeRegister)
-            formatter.separator = cardNumberSeparator
+            let formatter = cardNumberFormatter
             text = formatter.formattedCardNumber(unformattedCardNumber)
-            parsedCardNumber = cardNumber
             numberInputTextFieldDelegate?.numberInputTextFieldDidChangeText(self)
         }
     }

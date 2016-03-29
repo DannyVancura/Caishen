@@ -10,6 +10,6 @@ import UIKit
 
 public protocol CardInfoTextFieldDelegate {
     func textField(textField: UITextField, didEnterValidInfo: String)
-    
     func textField(textField: UITextField, didEnterPartiallyValidInfo: String)
+    func textField(textField: UITextField, didEnterOverflowInfo overFlowDigits: String)
 }

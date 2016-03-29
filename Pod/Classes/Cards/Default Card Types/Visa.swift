@@ -10,8 +10,6 @@ import UIKit
 
 public struct Visa: CardType {
     
-    public let cardTypeImage: UIImage? = UIImage(named: "Visa") ?? UIImage(named: "Visa", inBundle: NSBundle(forClass: CardNumberTextField.self), compatibleWithTraitCollection: nil)
-    
     public let name = "Visa"
     
     public let CVCLength = 3

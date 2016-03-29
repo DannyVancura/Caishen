@@ -14,16 +14,6 @@ import Foundation
 public protocol CardType {
     
     /**
-     The image which is displayed in the CardNumberTextField, when the entered card number matches this card type.
-     */
-    var cardTypeImage: UIImage? { get }
-    
-    /**
-     The image which is displayed in the CardNumberTextField, when the user is entering the CVC for this card type.
-     */
-    var cvcImage: UIImage? { get }
-    
-    /**
      - returns: The card type name (e.g.: Visa, MasterCard, ...)
      */
     var name: String { get }
@@ -73,12 +63,12 @@ extension CardType {
         return cardType.name == self.name
     }
 
-    public var cvcImage: UIImage? {
-        return UIImage(named: "CVC") ?? UIImage(named: "CVC", inBundle: NSBundle(forClass: CardNumberTextField.self), compatibleWithTraitCollection: nil)
-    }
-
     public var numberGrouping: [Int] {
         return [4, 4, 4, 4]
+    }
+
+    public var maxLength: Int {
+        return numberGrouping.reduce(0) { $0 + $1 }
     }
 
     public func validateCVC(cvc: CVC) -> CardValidationResult {
@@ -179,6 +169,8 @@ extension CardType {
             return .Valid
         } else if actualLength < expectedLength {
             return .NumberIncomplete
+        } else if actualLength > maxLength {
+            return .NumberTooLong
         } else {
             return .NumberDoesNotMatchType
         }

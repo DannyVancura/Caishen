@@ -67,31 +67,31 @@ class CardNumberValidatorTests: XCTestCase {
     func testValidCards() {
         print("Validate Visa")
         self.validVisaNumbers.forEach({
-            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0))?.name, Visa().name)
+            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0)).name, Visa().name)
             XCTAssertValid(Visa().validateNumber(Number(rawValue: $0)))
         })
         
         print("Validate Amex")
         self.validAmexNumbers.forEach({
-            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0))?.name, AmericanExpress().name)
+            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0)).name, AmericanExpress().name)
             XCTAssertValid(AmericanExpress().validateNumber(Number(rawValue: $0)))
         })
         
         print("Validate Diners Club")
         self.validDinersClubNumbers.forEach({
-            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0))?.name, DinersClub().name)
+            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0)).name, DinersClub().name)
             XCTAssertValid(DinersClub().validateNumber(Number(rawValue: $0)))
         })
         
         print("Validate Discover")
         self.validDiscoverNumbers.forEach({
-            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0))?.name, Discover().name)
+            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0)).name, Discover().name)
             XCTAssertValid(Discover().validateNumber(Number(rawValue: $0)))
         })
         
         print("Validate JCB")
         self.validJCBNumbers.forEach({
-            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0))?.name, JCB().name, "Card number was interpreted as wrong kind: \($0)")
+            XCTAssertEqual(CardTypeRegister.sharedCardTypeRegister.cardTypeForNumber(Number(rawValue: $0)).name, JCB().name, "Card number was interpreted as wrong kind: \($0)")
             XCTAssertValid(JCB().validateNumber(Number(rawValue: $0)))
         })
     }

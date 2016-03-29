@@ -19,26 +19,35 @@ public class DetailInputTextField: StylizedTextField {
     
     public func textFieldDidBeginEditing(textField: UITextField) {
         if (textField.text ?? "").isEmpty {
-            textField.text = CardNumberTextField.emptyTextFieldCharacter
+            textField.text = UITextField.emptyTextFieldCharacter
         }
     }
     
     public override func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-        let newText = NSString(string: (textField.text ?? "")).stringByReplacingCharactersInRange(range, withString: string).stringByReplacingOccurrencesOfString(CardNumberTextField.emptyTextFieldCharacter, withString: "")
+        let newText = NSString(string: (textField.text ?? "")).stringByReplacingCharactersInRange(range, withString: string).stringByReplacingOccurrencesOfString(UITextField.emptyTextFieldCharacter, withString: "")
         
-        let deletingLastCharacter = !(textField.text ?? "").isEmpty && textField.text != CardNumberTextField.emptyTextFieldCharacter && newText.isEmpty
+        let deletingLastCharacter = !(textField.text ?? "").isEmpty && textField.text != UITextField.emptyTextFieldCharacter && newText.isEmpty
         if deletingLastCharacter {
-            textField.text = CardNumberTextField.emptyTextFieldCharacter
+            textField.text = UITextField.emptyTextFieldCharacter
             cardInfoTextFieldDelegate?.textField(self, didEnterPartiallyValidInfo: newText)
             return false
         }
         
-        if isInputValid(newText, partiallyValid: false) {
-            textField.text = newText
-            cardInfoTextFieldDelegate?.textField(self, didEnterValidInfo: newText)
-        } else if isInputValid(newText, partiallyValid: true) {
-            textField.text = newText
-            cardInfoTextFieldDelegate?.textField(self, didEnterPartiallyValidInfo: newText)
+        let autoCompletedNewText = autocompleteText(newText)
+        
+        let (currentTextFieldText, overflowTextFieldText) = splitText(autoCompletedNewText)
+        
+        if isInputValid(currentTextFieldText, partiallyValid: true) {
+            textField.text = currentTextFieldText
+            if isInputValid(currentTextFieldText, partiallyValid: false) {
+                cardInfoTextFieldDelegate?.textField(self, didEnterValidInfo: currentTextFieldText)
+            } else {
+                cardInfoTextFieldDelegate?.textField(self, didEnterPartiallyValidInfo: currentTextFieldText)
+            }
+        }
+        
+        if !overflowTextFieldText.characters.isEmpty {
+            cardInfoTextFieldDelegate?.textField(self, didEnterOverflowInfo: overflowTextFieldText)
         }
         
         return false
@@ -54,12 +63,31 @@ public class DetailInputTextField: StylizedTextField {
         }
     }
     
+    private func splitText(text: String) -> (currentText: String, overflowText: String) {
+        let hasOverflow = text.characters.count > expectedInputLength
+        let index = (hasOverflow) ?
+            text.startIndex.advancedBy(expectedInputLength) :
+            text.startIndex.advancedBy(text.characters.count)
+        return (text.substringToIndex(index), text.substringFromIndex(index))
+    }
+}
+
+extension DetailInputTextField: AutoCompletingTextField {
+
+    func autocompleteText(text: String) -> String {
+        return text
+    }
+}
+
+extension DetailInputTextField: TextFieldValidation {
     /**
-     Checks the validity of the input.
-     
-     - returns: True, if the input is valid.
+     Default number of expected digits for MonthInputTextField and YearInputTextField
      */
-    internal func isInputValid(input: String, partiallyValid: Bool) -> Bool {
+    var expectedInputLength: Int {
+        return 2
+    }
+
+    func isInputValid(input: String, partiallyValid: Bool) -> Bool {
         return true
     }
 }

@@ -23,7 +23,7 @@ func XCTAssertIncompleteCVC(validationResult: CardValidationResult) {
 }
 
 func XCTAssertInvalidNumberForType(validationResult: CardValidationResult) {
-    XCTAssertTrue(validationResult.isSupersetOf(CardValidationResult.NumberDoesNotMatchType), "Expected an invalid number for the credit card type, but got \(validationResult.description)")
+    XCTAssertTrue(validationResult.isSupersetOf(CardValidationResult.NumberTooLong), "Expected an invalid number for the credit card type, but got \(validationResult.description)")
 }
 
 func XCTAssertIncompleteNumber(validationResult: CardValidationResult) {

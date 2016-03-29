@@ -11,6 +11,9 @@ import UIKit
 public class CVCInputTextField: DetailInputTextField {
     
     var cardType: CardType?
+    override var expectedInputLength: Int {
+        return cardType?.CVCLength ?? 3
+    }
     /**
      Checks the validity of the entered card validation code.
      

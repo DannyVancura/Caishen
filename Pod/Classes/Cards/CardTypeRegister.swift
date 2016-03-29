@@ -42,7 +42,7 @@ public class CardTypeRegister {
         registeredCardTypes.appendContentsOf(cardTypes)
     }
     
-    public func cardTypeForNumber(cardNumber: Number) -> CardType? {
+    public func cardTypeForNumber(cardNumber: Number) -> CardType {
         for i in (0...min(cardNumber.length, 6)).reverse() {
             if let substring = cardNumber.rawValue[0,i], let substringAsNumber = Int(substring) {
                 if let firstMatchingCardType = registeredCardTypes.filter({
@@ -53,7 +53,7 @@ public class CardTypeRegister {
             }
         }
         
-        return nil
+        return UnknownCardType()
     }
 
 }

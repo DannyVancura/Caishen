@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "visa.png",
+      "filename" : "Visa.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "visa@2x.png",
+      "filename" : "Visa@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "visa@2x-1.png",
+      "filename" : "Visa@3x.png",
       "scale" : "3x"
     }
   ],

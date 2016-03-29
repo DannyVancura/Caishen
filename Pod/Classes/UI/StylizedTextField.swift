@@ -58,7 +58,7 @@ public class StylizedTextField: UITextField, UITextFieldDelegate {
         didSet {
             if (text ?? "").isEmpty {
                 deleteBackwardCallback?(self)
-            } else if text == CardNumberTextField.emptyTextFieldCharacter {
+            } else if text == UITextField.emptyTextFieldCharacter {
                 drawPlaceholderInRect(textInputView.bounds)
             }
             setNeedsDisplay()
@@ -83,7 +83,7 @@ public class StylizedTextField: UITextField, UITextFieldDelegate {
     }
     
     public override func drawRect(rect: CGRect) {
-        if text == "" || text == CardNumberTextField.emptyTextFieldCharacter {
+        if text == "" || text == UITextField.emptyTextFieldCharacter {
             super.drawPlaceholderInRect(rect)
         } else {
             super.drawRect(rect)

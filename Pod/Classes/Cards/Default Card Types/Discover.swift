@@ -9,9 +9,7 @@
 import UIKit
 
 public struct Discover: CardType {
-    
-    public let cardTypeImage: UIImage? = UIImage(named: "Discover") ?? UIImage(named: "Discover", inBundle: NSBundle(forClass: CardNumberTextField.self), compatibleWithTraitCollection: nil)
-    
+
     public let name = "Discover"
     
     public let CVCLength = 3

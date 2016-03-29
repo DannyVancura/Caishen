@@ -39,7 +39,8 @@ class CardExpiryValidatorTests: XCTestCase {
                                 Expiry(string: "Feb 2016"), // 8
                                 Expiry(string: "Feb/2016"), // 9
                                 Expiry(string: "022016"), // 10
-                                Expiry(string: "02.2016")] // 11
+                                Expiry(string: "02.2016"), // 11
+                                Expiry(string: "00/2099")] // 12
         
         let shouldNotBeNil = [  Expiry(string: "02-2006"),
                                 Expiry(string: "02-06"),

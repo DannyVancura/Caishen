@@ -71,6 +71,9 @@ public struct CardValidationResult: OptionSetType {
     /// Indicates that the expiry is invalid
     public static let InvalidExpiry           = CardValidationResult(rawValue: 1 << 8)
 
+    /// Indicates that the card number is too long.
+    public static let NumberTooLong           = CardValidationResult(rawValue: 1 << 9)
+
 }
 
 extension CardValidationResult: CustomStringConvertible {
@@ -115,6 +118,10 @@ extension CardValidationResult: CustomStringConvertible {
 
         if isSupersetOf(.UnknownType) {
             strings.append("Card type could not be inferred")
+        }
+
+        if isSupersetOf(.NumberTooLong) {
+            strings.append("Card number is too long")
         }
 
         return strings

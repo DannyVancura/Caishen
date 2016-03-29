@@ -10,11 +10,7 @@ import UIKit
 
 public struct AmericanExpress: CardType {
     
-    public let cardTypeImage: UIImage? = UIImage(named: "Amex") ?? UIImage(named: "Amex", inBundle: NSBundle(forClass: CardNumberTextField.self), compatibleWithTraitCollection: nil)
-    
-    public let cvcImage: UIImage? = UIImage(named: "AmexCVC")  ?? UIImage(named: "AmexCVC", inBundle: NSBundle(forClass: CardNumberTextField.self), compatibleWithTraitCollection: nil)
-    
-    public let name = "Amex"
+   public let name = "Amex"
     
     public let CVCLength = 4
 

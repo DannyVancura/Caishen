@@ -8,24 +8,18 @@
 
 import UIKit
 
-public class CardNumberFormatter: NSObject {
-    public var separator: String
+public final class CardNumberFormatter {
+
+    public let separator: String
     private var cardTypeRegister: CardTypeRegister
     
     /**
      Creates a `CardNumberFormatter` with the provided separator for formatting.
      - parameter separator: The separator that is used for grouping the card number.
      */
-    public init(separator: String, cardTypeRegister: CardTypeRegister) {
+    public init(cardTypeRegister: CardTypeRegister, separator: String = " ") {
         self.separator = separator
         self.cardTypeRegister = cardTypeRegister
-    }
-    
-    /**
-     Creates a default `CardNumberFormatter` with a single space as separator for formatting.
-     */
-    public convenience init(cardTypeRegister: CardTypeRegister) {
-        self.init(separator: " ", cardTypeRegister: cardTypeRegister)
     }
     
     /**
@@ -49,7 +43,7 @@ public class CardNumberFormatter: NSObject {
         
         let cardType = cardTypeRegister.cardTypeForNumber(Number(rawValue: cardNumberString))
         do {
-            let groups = cardType?.numberGrouping ?? [4,4,4,4]
+            let groups = cardType.numberGrouping
             var pattern = ""
             var first = true
             for group in groups {

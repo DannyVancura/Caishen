@@ -10,13 +10,14 @@ import XCTest
 import Caishen
 
 class CardNumberFormatterTests: XCTestCase {
-    
+
+    private let separator = "-"
     private var formatter: CardNumberFormatter!
     
     override func setUp() {
         super.setUp()
         
-        self.formatter = CardNumberFormatter(cardTypeRegister: CardTypeRegister.sharedCardTypeRegister)
+        formatter = CardNumberFormatter(cardTypeRegister: CardTypeRegister.sharedCardTypeRegister, separator: separator)
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
@@ -26,8 +27,6 @@ class CardNumberFormatterTests: XCTestCase {
     }
     
     func testCorrectSeparator() {
-        self.formatter.separator = "-"
-        
         let testNumber = Number(rawValue: "4123123412341234")
         
         let formattedTestNumber = self.formatter.formattedCardNumber(testNumber.description)
