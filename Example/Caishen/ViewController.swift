@@ -82,7 +82,7 @@ class ViewController: UIViewController, CardTextFieldDelegate, CardIOPaymentView
             return
         }
     
-        cardNumberTextField.card?.tokenizeViaBraintree(braintreeClient, postalCode: "00000", completionHandler: { (nonce) in
+        cardNumberTextField.card.tokenizeViaBraintree(braintreeClient, postalCode: "00000", completionHandler: { (nonce) in
             print("\(nonce.type) \(nonce.localizedDescription)")
         }, errorHandler: { (error) in
             print(error)
